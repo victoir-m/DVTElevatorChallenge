@@ -11,7 +11,7 @@ namespace DVTElevatorChallenge
     public class ElevatorUnitTest
     {
         [TestMethod]
-        public async Task SuccessFullRequestTest()
+        public async Task SuccessFullRequestTest()//test successful elevator request
         {
             ElevatorBL elevatorBL = new ElevatorBL();
             AddElevators(elevatorBL,3, 9, 10, 4);//ElevatorBL elevatorBL, int numberOfElevators, int numberOfFloors, int maxCapacity, int currentCapacity
@@ -21,7 +21,7 @@ namespace DVTElevatorChallenge
         }
 
         [TestMethod]
-        public async Task NoAvailableElevatorRequestTest()
+        public async Task NoAvailableElevatorRequestTest()//test unavailable elevator request
         {
             ElevatorBL elevatorBL = new ElevatorBL();
             //AddElevators(elevatorBL,3, 9, 10, 4);//ElevatorBL elevatorBL, int numberOfElevators, int numberOfFloors, int maxCapacity, int currentCapacity
@@ -31,7 +31,7 @@ namespace DVTElevatorChallenge
         }
 
         [TestMethod]
-        public async Task InvalidRequestTest()
+        public async Task InvalidRequestTest()//test invalid elevator request
         {
             ElevatorBL elevatorBL = new ElevatorBL();
             AddElevators(elevatorBL,3, 9, 10, 4);//ElevatorBL elevatorBL, int numberOfElevators, int numberOfFloors, int maxCapacity, int currentCapacity
@@ -42,7 +42,7 @@ namespace DVTElevatorChallenge
         }
 
         [TestMethod]
-        public async Task ElevatorFull()
+        public async Task ElevatorFull()//test elevator full request
         {
             ElevatorBL elevatorBL = new ElevatorBL();
             AddElevators(elevatorBL,3, 9, 10, 10);//ElevatorBL elevatorBL, int numberOfElevators, int numberOfFloors, int maxCapacity, int currentCapacity

@@ -8,7 +8,7 @@ namespace DVTElevatorChallenge
 {
     public class ElevatorRequestResponseModel
     {
-        public RequestStatus RequestStatus { get; set; }
-        public string Message { get; set; }
+        public RequestStatus RequestStatus { get; set; } // request status
+        public string Message { get; set; } // resposne message to desplay on console
     }
 }

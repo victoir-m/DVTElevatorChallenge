@@ -19,7 +19,7 @@ namespace DVTElevatorChallenge
 
             input.InputInger(out numberOfElevators);
 
-            for(int i = 0; i < numberOfElevators; i++)
+            for(int i = 0; i < numberOfElevators; i++)//add elevators to the list of elevators
             {
                 ElevatorModel elevator = new ElevatorModel()
                 {
@@ -39,7 +39,7 @@ namespace DVTElevatorChallenge
 
             input.InputInger(out numberOfFloors);
 
-            elevatorBL.AddNumberOfFloors(numberOfFloors);
+            elevatorBL.AddNumberOfFloors(numberOfFloors);//add the number of floors
 
             Console.WriteLine("Number Of added successfully");
 
@@ -50,70 +50,82 @@ namespace DVTElevatorChallenge
             Console.WriteLine("--------------------------------------------------------------");
             Console.WriteLine("----------------------Elevator----------------------------");
 
-            while (true)
+            try
             {
-
-                Console.WriteLine("Are you going up or Down (Enter 1 for Up and 2 for Down | 0 to stop the program)?");
-                int direction;
-
-                input.InputInger(out direction);
-
-                Console.WriteLine();
-                Console.WriteLine("Please enter the current floor you are on? | 0 to stop the program");
-                int currentFloor;
-
-                input.InputInger(out currentFloor);
-
-                Console.WriteLine();
-                Console.WriteLine("Which floor are you going to? | 0 to stop the program");
-                int destination;
-
-                input.InputInger(out destination);
-
-                Console.WriteLine();
-                Console.WriteLine("How many people are with you? | 0 to stop the program");
-                int numberOfPeople;
-
-                input.InputInger(out numberOfPeople);
-
-                ElevatorRequestModel requestModel = new ElevatorRequestModel
+                while (true)
                 {
-                    CurrentFloor = currentFloor,
-                    DestinationFloor = destination,
-                    Direction = direction == 1 ? ElevatorDirection.Up : ElevatorDirection.Down,
-                    NumberOfPeople = numberOfPeople,
-                    arrived = false
-                };
 
-                ElevatorRequestResponseModel elevatorRequestResponse = await elevatorBL.RequestElevator(requestModel);
+                    Console.WriteLine("Are you going up or Down (Enter 1 for Up and 2 for Down | 0 to stop the program)?");
+                    int direction;
 
-                Console.WriteLine();
-                if (elevatorRequestResponse != null && elevatorRequestResponse.RequestStatus.Equals(RequestStatus.Success))
-                {
-                    Console.WriteLine($"{elevatorRequestResponse.Message}");
-                }
-                else if (elevatorRequestResponse != null && elevatorRequestResponse.RequestStatus.Equals(RequestStatus.NoAvailableElevator))
-                {
-                    Console.WriteLine($"{elevatorRequestResponse.Message}");
-                    break;
-                }
-                else if (elevatorRequestResponse != null && elevatorRequestResponse.RequestStatus.Equals(RequestStatus.InvalidRequest))
-                {
-                    Console.WriteLine($"{elevatorRequestResponse.Message}");
-                    break;
-                }
-                else if (elevatorRequestResponse != null && elevatorRequestResponse.RequestStatus.Equals(RequestStatus.ElevatorFull))
-                {
-                    Console.WriteLine($"{elevatorRequestResponse.Message}");
-                    string response = Console.ReadLine().ToLower();
+                    input.InputInger(out direction);
 
-                    if (response.Equals("no"))
+                    Console.WriteLine();
+                    Console.WriteLine("Please enter the current floor you are on? | 0 to stop the program");
+                    int currentFloor;
+
+                    input.InputInger(out currentFloor);
+
+                    Console.WriteLine();
+                    Console.WriteLine("Which floor are you going to? | 0 to stop the program");
+                    int destination;
+
+                    input.InputInger(out destination);
+
+                    Console.WriteLine();
+                    Console.WriteLine("How many people are with you? | 0 to stop the program");
+                    int numberOfPeople;
+
+                    input.InputInger(out numberOfPeople);
+
+                    ElevatorRequestModel requestModel = new ElevatorRequestModel//create new quest model from user inputs
+                    {
+                        CurrentFloor = currentFloor,
+                        DestinationFloor = destination,
+                        Direction = direction == 1 ? ElevatorDirection.Up : ElevatorDirection.Down,
+                        NumberOfPeople = numberOfPeople,
+                        arrived = false
+                    };
+
+                    ElevatorRequestResponseModel elevatorRequestResponse = await elevatorBL.RequestElevator(requestModel);//make a new elevator request
+
+                    Console.WriteLine();
+                    if (elevatorRequestResponse != null && elevatorRequestResponse.RequestStatus.Equals(RequestStatus.Success))
+                    {
+                        Console.WriteLine($"{elevatorRequestResponse.Message}");
+                        Console.WriteLine();
+                    }
+                    else if (elevatorRequestResponse != null && elevatorRequestResponse.RequestStatus.Equals(RequestStatus.NoAvailableElevator))
+                    {
+                        Console.WriteLine($"{elevatorRequestResponse.Message}");
+                        Console.WriteLine();
                         break;
+                    }
+                    else if (elevatorRequestResponse != null && elevatorRequestResponse.RequestStatus.Equals(RequestStatus.InvalidRequest))
+                    {
+                        Console.WriteLine($"{elevatorRequestResponse.Message}");
+                        Console.WriteLine();
+                        break;
+                    }
+                    else if (elevatorRequestResponse != null && elevatorRequestResponse.RequestStatus.Equals(RequestStatus.ElevatorFull))
+                    {
+                        Console.WriteLine($"{elevatorRequestResponse.Message}");
+                        Console.WriteLine();
+                        string response = Console.ReadLine().ToLower();
+
+                        if (response.Equals("no"))
+                            break;
+
+                    }
 
                 }
 
             }
-
+            catch (Exception)
+            {
+                Console.WriteLine("Something went wrong in the request please contact support");
+                Environment.Exit(0);
+            }
         }
 
         public bool StopProgram(int intput)

@@ -8,22 +8,35 @@ namespace DVTElevatorChallenge
 {
     public class ElevatorBL
     {
-        List<ElevatorModel> elevators = new List<ElevatorModel>();
-        int numberOfFloors;
+        List<ElevatorModel> elevators = new List<ElevatorModel>(); //create a new list of elevators
+        int numberOfFloors; // number of floors in the building
+        const int movementDurationInSeconds = 3; // the duration of the movement of elevators after when requested. this will allow for multiple requestes to be done
 
+        /// <summary>
+        ///     Add elevator to the list of elevators
+        ///     <param name="elevator">new elevator model</param>  expected data type ElevatorModel
+        /// </summary>
         public void AddElevators(ElevatorModel elevator)
         {
             elevators.Add(elevator);
         }
 
+        /// <summary>
+        ///     Add or initialize number of floors
+        ///     <param name="numberOfFloors">The number of floors in a building </param>  expected data type int
+        /// </summary>
         public void AddNumberOfFloors(int numberOfFloors)
         {
             this.numberOfFloors = numberOfFloors;
         }
 
+        /// <summary>
+        ///     Make an elevator request and process it asynchronously
+        ///     <param name="elevatorRequest"></param>  expected data type ElevatorRequestModel
+        /// </summary>
         public async Task<ElevatorRequestResponseModel> RequestElevator(ElevatorRequestModel elevatorRequest)
         {
-
+            //ensure that it a valid elavator request
             if (elevatorRequest.CurrentFloor == numberOfFloors && elevatorRequest.Direction.Equals(ElevatorDirection.Up)) return new ElevatorRequestResponseModel
             {
                 RequestStatus = RequestStatus.InvalidRequest,
@@ -36,7 +49,7 @@ namespace DVTElevatorChallenge
                 Message = "You have made an invalid request, Elevator cannot go below this floor"
             };
 
-            ElevatorModel nearestElevator = FindNearestElevator(elevatorRequest.CurrentFloor);
+            ElevatorModel nearestElevator = FindNearestElevator(elevatorRequest.CurrentFloor);//find the nearest elevator
 
             if(nearestElevator == null)
             {
@@ -61,9 +74,9 @@ namespace DVTElevatorChallenge
 
             Console.WriteLine();
 
-            await MoveElevatorToRequestFloor(nearestElevator, elevatorRequest.CurrentFloor);
+            await MoveElevatorToRequestFloor(nearestElevator, elevatorRequest.CurrentFloor); //move the elevator you have found to the requested floor
 
-            bool canEnterElevator = nearestElevator.CanEnterElevator(elevatorRequest.NumberOfPeople);
+            bool canEnterElevator = nearestElevator.CanEnterElevator(elevatorRequest.NumberOfPeople);// check if people can enter into the elevator
 
             if (nearestElevator.Floor == elevatorRequest.CurrentFloor)
             {
@@ -71,15 +84,15 @@ namespace DVTElevatorChallenge
                 Console.WriteLine($"{nearestElevator.Alias} is here");
                 if (canEnterElevator)
                 {
-                    nearestElevator.AddElevatorRequest(elevatorRequest);
+                    nearestElevator.AddElevatorRequest(elevatorRequest);// add the elevator request to list of requests 
 
-                    nearestElevator.EnterElevator(elevatorRequest.NumberOfPeople);
+                    nearestElevator.EnterElevator(elevatorRequest.NumberOfPeople);// allow people to enter people the elevator
                     Console.WriteLine($"Entered {nearestElevator.Alias}");
-                    await Task.Run(() => MoveElavators());
+                    await Task.Run(() => MoveElavators());// start elevator movement
                     return new ElevatorRequestResponseModel
                     {
                         RequestStatus = RequestStatus.Success,
-                        Message = $"Successfull request, {nearestElevator.Alias} is  moving"
+                        Message = $"Successfull request, elevators are moving"
                     };
                 }
                 else return new ElevatorRequestResponseModel
@@ -91,6 +104,10 @@ namespace DVTElevatorChallenge
             else return null;
         }
 
+        /// <summary>
+        ///     Find the nearest elevator to floor on which the request was made
+        ///     <param name="requestingFloor">The floor on which the request was made </param>  expected data type int
+        /// </summary>
         private ElevatorModel FindNearestElevator(int requestingFloor)
         {
             ElevatorModel nearestElevator = elevators.Where(x => x.Direction.Equals(ElevatorDirection.Up) && x.Floor <= requestingFloor)
@@ -104,21 +121,28 @@ namespace DVTElevatorChallenge
             return nearestElevator;
         }
 
-
+        /// <summary>
+        ///     Simulate the movement of elevators as asynchronously
+        /// </summary>
         public async Task MoveElavators()
         {
-            for (int i = 0; i < numberOfFloors; i++)
+            for (int i = 0; i < movementDurationInSeconds; i++)
             {
                 foreach (var item in elevators)
                 {
                     int newFloor = item.Move(numberOfFloors, false);
-                    if (newFloor != 0) item.ChangeFloorNumber(newFloor);
+                    if (newFloor != 0) item.ChangeFloorNumber(newFloor);//change the floor number as it moves
                 }
 
-                await Task.Delay(1000);
+                await Task.Delay(1000);//delay movement updates by 1 second
             }
         }
-    
+
+        /// <summary>
+        ///     Move elevator to the requested floor 
+        ///     <param name="nearestElevator">Nearest elevator to the request floor </param>  expected data type ElevatorModel
+        ///     <param name="requestFloor">Floor on which th request was made </param>  expected data type int
+        /// </summary>
         public async Task MoveElevatorToRequestFloor(ElevatorModel nearestElevator, int requestFloor)
         {
             for (int i = 0; i < requestFloor; i++)
@@ -126,13 +150,13 @@ namespace DVTElevatorChallenge
                 if(nearestElevator.Floor != requestFloor)
                 {
                     int newFloor = nearestElevator.Move(requestFloor, true);
-                    if (newFloor != 0) nearestElevator.ChangeFloorNumber(newFloor);
+                    if (newFloor != 0) nearestElevator.ChangeFloorNumber(newFloor);//change the floor number
                 }
 
-                await Task.Delay(1000);
+                await Task.Delay(1000);//deleay movement updates by 1 second 
             }
 
-            nearestElevator.WriteElevatorMovementConsole();
+            nearestElevator.WriteElevatorMovementConsole();//write the to the console the elevators current activity
         }
     }
 }

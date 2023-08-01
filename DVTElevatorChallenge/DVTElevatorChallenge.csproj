@@ -59,7 +59,6 @@
     <Compile Include="ElevatorRequestResponseModel.cs" />
     <Compile Include="ElevatorUnitTest.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="IElevatorBL.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
